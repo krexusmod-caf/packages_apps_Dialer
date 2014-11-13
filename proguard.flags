@@ -12,5 +12,8 @@
 @com.android.dialer.NeededForReflection *;
 }
 
+# Keep ExtendedLookupDirectories for assets/contacts_extensions.properties
+-keep class com.android.dialer.lookup.ExtendedLookupDirectories { *; }
+
 -verbose
 -dontwarn com.suntek.rcs.ui.common.VNodeBuilder

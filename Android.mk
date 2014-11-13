@@ -22,6 +22,7 @@ LOCAL_SRC_FILES += src/org/codeaurora/presenceserv/IPresenceService.aidl \
                    src/org/codeaurora/presenceserv/IPresenceServiceCB.aidl
 LOCAL_RESOURCE_DIR := $(addprefix $(LOCAL_PATH)/, $(res_dirs)) \
     frameworks/support/v7/cardview/res frameworks/support/v7/recyclerview/res
+LOCAL_ASSET_DIR += $(LOCAL_PATH)/assets
 
 LOCAL_AAPT_FLAGS := \
     --auto-add-overlay \
@@ -55,7 +56,7 @@ LOCAL_PROGUARD_FLAG_FILES := proguard.flags $(incallui_dir)/proguard.flags
 
 # Uncomment the following line to build against the current SDK
 # This is required for building an unbundled app.
-#LOCAL_SDK_VERSION := current
+# LOCAL_SDK_VERSION := current
 
 include $(BUILD_PACKAGE)
 
