@@ -32,11 +32,6 @@
     <string name="people_lookup_provider_title">People lookup provider</string>
     <string name="reverse_lookup_provider_title">Reverse lookup provider</string>
 
-    <!-- Chinese Reverse Lookup Provider -->
-    <string name="cyngn_reverse_lookup_provider_package" translatable="false">com.cyngn.chineselocationlookup</string>
-    <string name="cyngn_reverse_lookup_provider_name">Cyngn Chinese (CN)</string>
-    <string name="cyngn_reverse_lookup_provider_value" translatable="false">CyngnChinese</string>
-
     <!-- In call vibration features -->
     <string name="incall_vibration_category_key" translatable="false">dialer_general_incall_vibration_category_key</string>
     <string name="incall_vibration_category_title">In-call vibration</string>
