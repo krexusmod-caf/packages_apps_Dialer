@@ -113,11 +113,6 @@ public class SpeedDialListActivity extends ListActivity implements
     private static final int MENU_DELETE = 1002;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
     private boolean mStartSearch = true;
-    private int mItemPosition;
-    private static String SPEAD_DIAL_NUMBER = "SpeedDialNumber";
-    private static String SAVE_CLICKED_POS = "Clicked_pos";
-    private String mInputNumber;
-    private boolean mConfigChanged;
 
     private static class Record {
         long contactId;
@@ -170,29 +165,6 @@ public class SpeedDialListActivity extends ListActivity implements
 
         mAdapter = new SpeedDialAdapter();
         setListAdapter(mAdapter);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mAddSpeedDialDialog == null || !mAddSpeedDialDialog.isShowing()) {
-            outState.clear();
-            return;
-        }
-        outState.putInt(SAVE_CLICKED_POS, mItemPosition);
-        outState.putString(SPEAD_DIAL_NUMBER, mEditNumber.getText().toString());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle state) {
-        super.onRestoreInstanceState(state);
-        if (state.isEmpty()) {
-            return;
-        }
-        mConfigChanged = true;
-        int number = state.getInt(SAVE_CLICKED_POS, mItemPosition);
-        mInputNumber = state.getString(SPEAD_DIAL_NUMBER, "");
-        showAddSpeedDialDialog(number);
     }
 
     @Override
@@ -284,7 +256,6 @@ public class SpeedDialListActivity extends ListActivity implements
 
     private void showAddSpeedDialDialog(final int number) {
         mPickNumber = number;
-        mItemPosition = number;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.speed_dial_settings);
         View contentView = LayoutInflater.from(this).inflate(
@@ -302,11 +273,6 @@ public class SpeedDialListActivity extends ListActivity implements
         mEditNumber = (EditText) contentView.findViewById(R.id.edit_container);
         if (null != mRecords.get(number)) {
             mEditNumber.setText(SpeedDialUtils.getNumber(this, number));
-
-        } else if (mConfigChanged && !mInputNumber.isEmpty()) {
-            mEditNumber.setText(mInputNumber);
-            mConfigChanged = false;
-            mInputNumber = "";
         }
         Button cancelButton = (Button) contentView
                 .findViewById(R.id.btn_cancel);
@@ -379,7 +345,6 @@ public class SpeedDialListActivity extends ListActivity implements
             }
         } else {
             int number = position + 1;
-            mItemPosition = number;
             final Record record = mRecords.get(number);
             if (record == null) {
                 showAddSpeedDialDialog(number);
