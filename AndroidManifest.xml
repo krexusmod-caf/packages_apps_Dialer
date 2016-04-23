@@ -325,18 +325,9 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".SpeedDialListActivity"
-            android:theme="@style/DialtactsTheme"
-            android:label="@string/speed_dial_settings" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
-        </activity>
-
         <provider android:name="com.android.dialer.lookup.LookupProvider"
                   android:authorities="com.android.dialer.provider"
                   android:exported="false"
                   android:multiprocess="false" />
-
     </application>
 </manifest>
