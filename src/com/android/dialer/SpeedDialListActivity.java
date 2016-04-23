@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2013-2014, The Linux Foundation. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are
@@ -45,7 +45,6 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.Settings;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
-import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -79,13 +78,6 @@ public class SpeedDialListActivity extends ListActivity implements
     private static final String ACTION_ADD_VOICEMAIL =
             "com.android.phone.CallFeaturesSetting.ADD_VOICEMAIL";
     public static final String EXTRA_INITIAL_PICK_NUMBER = "initialPickNumber";
-
-    // Extra on intent containing the id of a subscription.
-    public static final String SUB_ID_EXTRA =
-            "com.android.phone.settings.SubscriptionInfoHelper.SubscriptionId";
-    // Extra on intent containing the label of a subscription.
-    private static final String SUB_LABEL_EXTRA =
-            "com.android.phone.settings.SubscriptionInfoHelper.SubscriptionLabel";
 
     private static final String[] LOOKUP_PROJECTION = new String[] {
         ContactsContract.Contacts._ID,
@@ -133,8 +125,6 @@ public class SpeedDialListActivity extends ListActivity implements
 
     private static final int PICK_CONTACT_RESULT = 0;
 
-    private SubscriptionManager mSubscriptionManager;
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -145,8 +135,6 @@ public class SpeedDialListActivity extends ListActivity implements
 
         //the first item is the "1.voice mail", it never changes
         mRecords.put(1, new Record(getString(R.string.voicemail)));
-
-        mSubscriptionManager = SubscriptionManager.from(this);
 
         ListView listview = getListView();
         listview.setOnItemClickListener(this);
@@ -227,7 +215,7 @@ public class SpeedDialListActivity extends ListActivity implements
     private void showAddSpeedDialDialog(final int number) {
         mPickNumber = number;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.speed_dial_settings);
+        builder.setTitle(R.string.set_speed_dial);
         View contentView = LayoutInflater.from(this).inflate(
                 R.layout.add_speed_dial_dialog, null);
         builder.setView(contentView);
@@ -299,14 +287,14 @@ public class SpeedDialListActivity extends ListActivity implements
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position == 0) {
             Intent intent = new Intent(ACTION_ADD_VOICEMAIL);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             if (TelephonyManager.getDefault().getPhoneCount() > 1) {
                 int sub = SubscriptionManager.getDefaultVoiceSubId();
-                SubscriptionInfo subInfo = mSubscriptionManager.getActiveSubscriptionInfo(sub);
-                if (subInfo != null) {
-                    intent.putExtra(SUB_ID_EXTRA, subInfo.getSubscriptionId());
-                    intent.putExtra(SUB_LABEL_EXTRA, subInfo.getDisplayName().toString());
-                }
+                intent.setClassName("com.android.phone",
+                        "com.android.phone.MSimCallFeaturesSubSetting");
+                intent.putExtra(PhoneConstants.SUBSCRIPTION_KEY, sub);
+            } else {
+                intent.setClassName("com.android.phone",
+                        "com.android.phone.CallFeaturesSetting");
             }
             try {
                 startActivity(intent);
@@ -422,7 +410,8 @@ public class SpeedDialListActivity extends ListActivity implements
 
         public SpeedDialAdapter() {
             mInflater = LayoutInflater.from(SpeedDialListActivity.this);
-            mPhotoManager = ContactPhotoManager.getInstance(SpeedDialListActivity.this);
+            mPhotoManager = (ContactPhotoManager) getApplicationContext().getSystemService(
+                    ContactPhotoManager.CONTACT_PHOTO_SERVICE);
         }
 
         @Override
